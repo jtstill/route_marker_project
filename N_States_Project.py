@@ -1,7 +1,10 @@
-""""The n states puzzle"""
+""""
+The N States Puzzle!
+This program, given a .txt file of state:number[s], will generate a set of solutions satisfying all 50 states and all 50 numbers used.
+"""
 
 class NStates:
-    """Generate all valid solutions for the n queens puzzle"""
+    """Generate all valid solutions for the N States Puzzle"""
     def __init__(self, filename, max_out):
         # Store the puzzle (problem) size and the number of valid solutions
         self.dict = self.file_to_dict(filename)
@@ -9,25 +12,28 @@ class NStates:
         self.states = list(self.dict.keys())
         self.size = len(self.dict)
         self.reference_board = self.make_reference_board()
-        # self.show_table(self.reference_board)
+            # self.show_table(self.reference_board)
         self.solutions = 0
         self.kill_switch = max_out
-        # a dictionary of [lists of state-number] --> created in solve
+            # A dictionary of [lists of state-number] --> populated in .solve()
         self.solution_dict = {}
-        # solves itself upon initiation --> prints solutions
+            # Solves itself upon initiation and prints solutions
         self.solve()
 
+    """Reads in a .txt. file and generates a dictionary from its contents"""
     def file_to_dict(self, filename):
         d = {}
         f = open(filename)
         for line in f:
-            line = line.replace(" ", "")
-            key, value = line.split(":")
-            line_list = value.strip().split(",")
-            line_set = set(line_list)
-            d[key] = line_set
+            if not line.startswith("#"):
+                line = line.replace(" ", "") # get rid of whitespace
+                key, value = line.split(":")
+                line_list = value.strip().split(",")
+                line_set = set(line_list)
+                d[key] = line_set
         return d
 
+    """Transposes the resulting dictionary (for faster result generation)"""
     def flip_dict(self):
         d2 = defaultdict(set)
         for k, s in self.dict.items():
@@ -35,6 +41,7 @@ class NStates:
                 d2[v].add(k)
         return d2
 
+    """Creates visual output reference board"""
     def make_reference_board(self):
         reference_table = []
         for state in self.states:  # for each state, loop 1-50 and fill with valid or invalid
@@ -47,11 +54,11 @@ class NStates:
             reference_table.append(ref_row)
         return reference_table
 
+    """Solvea the N States Puzzle and prints the number of solutions"""
     def solve(self):
-        """Solve the n states puzzle and print the number of solutions"""
         positions = [-1] * self.size
         self.choose_combo(positions, 0)
-        print("Found", self.solutions, "solutions.\n")
+            # print("Found", self.solutions, "solutions.\n")
 
     def choose_combo(self, positions, target_row):
         """
@@ -115,8 +122,8 @@ class NStates:
         self.solution_dict[key] = solution
         print("The solution as a list:", self.solution_dict[key])
 
+    """Shows the full NxN board"""
     def show_finished_board(self, positions):
-        """Show the full NxN board"""
         output = ""
         output += "\t"
         for num in range(1, 51):
@@ -153,30 +160,27 @@ class NStates:
         print("\n")
 
 
+"""Initializes and solves the n queens puzzle"""
 def main():
-    """Initialize and solve the n queens puzzle"""
-    # NStates uses a filename and find up to a number solutions (to save computing time)
-    #nstates = NStates("testfile2.txt", 10)
-    nstates = NStates("doable_sh_by_size.txt", 1000)
+    # NStates uses a filename and find up to a specified number of solutions (to save computing time)
+    # nstates = NStates("feasible_routes_by_size.txt", 1000)
+    nstates = NStates("existing_state_highways.txt", 1000)
 
     # Print the reference table
     print("Reference Table:")
     nstates.show_table(nstates.reference_board)
-    # print("Reference Table (plain):")
-    # print(nstates.reference_board)
 
     # Print the solution dictionary
-    # construct output for solution dict
     solution_dict = nstates.solution_dict
-    # states
+    # States
     print("States:      ", end = "")
     for value in solution_dict["Solution 1"]:
         state, num = value.split(" ")
         print(state, end=" ")
     print()
-    # the solutions
+    # Solution sets
     for key, values in solution_dict.items():
-        if len(key) == 10:
+        if len(key) == 10: # solution is one of first 10 solutions
             print(key, ": ", sep="", end=" ")
         else:
             print(key, ":", sep="", end=" ")

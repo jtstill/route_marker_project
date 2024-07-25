@@ -1,4 +1,4 @@
-""""The n queens puzzle"""
+""""The N Queens Puzzle: A Demo"""
 
 
 class NQueens:

@@ -1,3 +1,4 @@
+# In this file, enter your highways in format [State]:[#,#,...]
 AZ: 24
 CO: 9
 KS: 27
