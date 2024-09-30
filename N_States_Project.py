@@ -17,8 +17,12 @@ class NStates:
         self.kill_switch = max_out
             # A dictionary of [lists of state-number] --> populated in .solve()
         self.solution_dict = {}
-            # Solves itself upon initiation and prints solutions
-        self.solve()
+            
+        # Before solving, check that all 50 states and all 50 numbers are represented. If not, quit.
+        if len(self.dict) != 50 or len(self.mapped) != 50:
+            return
+        else: # Solve upon initiation and print solutions
+            self.solve()
 
     """Reads in a .txt. file and generates a dictionary from its contents"""
     def file_to_dict(self, filename):
@@ -30,7 +34,10 @@ class NStates:
                 key, value = line.split(":")
                 line_list = value.strip().split(",")
                 line_set = set(line_list)
-                d[key] = line_set
+                if key in d: # append to existing
+                    d[key].update(line_set)
+                else: # add
+                    d[key] = line_set
         return d
 
     """Transposes the resulting dictionary (for faster result generation)"""
@@ -164,14 +171,39 @@ class NStates:
 def main():
     # NStates uses a filename and find up to a specified number of solutions (to save computing time)
     # nstates = NStates("feasible_routes_by_size.txt", 1000)
+    print("Solving...")
     nstates = NStates("existing_state_highways.txt", 1000)
+
+    # Summary of Solutions
+    solution_dict = nstates.solution_dict
+    states_dict = nstates.dict
+    numbers_dict = nstates.mapped
+
+    if len(states_dict) != 50 or len(numbers_dict) != 50: # file isn't valid for solving
+        print("Please revise the input file. One or more elements may be missing:")
+        if len(states_dict) != 50:
+            print("\t- only", len(states_dict), "out of 50 states are included.")
+        if len(numbers_dict) != 50:
+            print("\t- only", len(numbers_dict), "out of 50 numbers are included (missing ", end = "")
+            missing_nums = []
+            i = 1
+            while i <= 50:
+                if str(i) not in numbers_dict.keys():
+                    missing_nums.append(i)
+                i += 1
+            print(', '.join(map(str,missing_nums)), ").", sep = "")   
+        return
+    elif len(solution_dict) == 0:
+        print("No solutions were found. Please expand your search.")
+        return
+    else:
+        print("Found ", len(solution_dict), " solutions (max 1000)!")
 
     # Print the reference table
     print("Reference Table:")
     nstates.show_table(nstates.reference_board)
 
     # Print the solution dictionary
-    solution_dict = nstates.solution_dict
     # States
     print("States:      ", end = "")
     for value in solution_dict["Solution 1"]:
