@@ -29,7 +29,7 @@ class NStates:
         d = {}
         f = open(filename)
         for line in f:
-            if not line.startswith("#"):
+            if not line.startswith("#") and len(line.strip()) != 0: # if line isn't commented out or blank
                 line = line.replace(" ", "") # get rid of whitespace
                 key, value = line.split(":")
                 line_list = value.strip().split(",")
@@ -75,8 +75,8 @@ class NStates:
         """
         # Base (stop) case - all N rows are occupied
         if target_row == self.size:
-            print("Solution:")
-            self.show_finished_board(positions)
+            #print("Solution:")
+            # self.show_finished_board(positions)
             self.solutions += 1
             # Add solution to the dictionary
             self.update_solution_dict(positions)
@@ -127,7 +127,7 @@ class NStates:
             solution.append(choice)
         key = "Solution " + str(self.solutions)
         self.solution_dict[key] = solution
-        print("The solution as a list:", self.solution_dict[key])
+        # print("The solution as a list:", self.solution_dict[key])
 
     """Shows the full NxN board"""
     def show_finished_board(self, positions):
@@ -172,12 +172,16 @@ def main():
     # NStates uses a filename and find up to a specified number of solutions (to save computing time)
     # nstates = NStates("feasible_routes_by_size.txt", 1000)
     print("Solving...")
-    nstates = NStates("existing_state_highways.txt", 1000)
+    nstates = NStates("existing_state_highways.txt", 100)
 
     # Summary of Solutions
     solution_dict = nstates.solution_dict
     states_dict = nstates.dict
     numbers_dict = nstates.mapped
+
+    """print(states_dict)
+    print(numbers_dict)
+    return"""
 
     if len(states_dict) != 50 or len(numbers_dict) != 50: # file isn't valid for solving
         print("Please revise the input file. One or more elements may be missing:")
