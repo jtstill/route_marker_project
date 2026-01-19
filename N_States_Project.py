@@ -17,14 +17,14 @@ class NStates:
         self.kill_switch = max_out
             # A dictionary of [lists of state-number] --> populated in .solve()
         self.solution_dict = {}
-            
+
         # Before solving, check that all 50 states and all 50 numbers are represented. If not, quit.
         if len(self.dict) != 50 or len(self.mapped) != 50:
             return
         else: # Solve upon initiation and print solutions
             self.solve()
 
-    """Reads in a .txt. file and generates a dictionary from its contents"""
+    """Reads in a .txt. file and generates a dictionary from its contents, in order of shortest values list per key to longest """
     def file_to_dict(self, filename):
         d = {}
         f = open(filename)
@@ -38,7 +38,12 @@ class NStates:
                     d[key].update(line_set)
                 else: # add
                     d[key] = line_set
-        return d
+
+        sorted_dict = {}
+        for k in sorted(d, key=lambda k: len(d[k]), reverse=False):
+            sorted_dict[k] = d[k]
+
+        return sorted_dict
 
     """Transposes the resulting dictionary (for faster result generation)"""
     def flip_dict(self):
@@ -61,7 +66,7 @@ class NStates:
             reference_table.append(ref_row)
         return reference_table
 
-    """Solvea the N States Puzzle and prints the number of solutions"""
+    """Solves the N States Puzzle and prints the number of solutions"""
     def solve(self):
         positions = [-1] * self.size
         self.choose_combo(positions, 0)
@@ -80,7 +85,7 @@ class NStates:
             self.solutions += 1
             # Add solution to the dictionary
             self.update_solution_dict(positions)
-            print("Above is solution #:", self.solutions)
+            print("Found solution #", self.solutions, sep="")
         else:
             # Kill switch for if the number of solutions is just too many for the program
             if self.solutions >= self.kill_switch:
@@ -172,7 +177,7 @@ def main():
     # NStates uses a filename and find up to a specified number of solutions (to save computing time)
     # nstates = NStates("feasible_routes_by_size.txt", 1000)
     print("Solving...")
-    nstates = NStates("existing_state_highways.txt", 100)
+    nstates = NStates("existing_state_highways.txt", 1000)
 
     # Summary of Solutions
     solution_dict = nstates.solution_dict
@@ -204,8 +209,8 @@ def main():
         print("Found ", len(solution_dict), " solutions (max 1000)!")
 
     # Print the reference table
-    print("Reference Table:")
-    nstates.show_table(nstates.reference_board)
+    '''print("Reference Table:")
+    nstates.show_table(nstates.reference_board)'''
 
     # Print the solution dictionary
     # States
